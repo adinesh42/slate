@@ -1,239 +1,377 @@
 ---
-title: API Reference
+title: Merak API Reference
 
 language_tabs: # must be one of https://git.io/vQNgJ
-  - shell
   - ruby
   - python
-  - javascript
+  - NodeJs
 
 toc_footers:
-  - <a href='#'>Sign Up for a Developer Key</a>
-  - <a href='https://github.com/tripit/slate'>Documentation Powered by Slate</a>
+  - <a href='https://dashboard.merak.ai' target="_blank">Sign Up for a Developer Key</a>
 
-includes:
-  - errors
+# includes:
+#   - errors
 
 search: true
 ---
 
 # Introduction
 
-Welcome to the Kittn API! You can use our API to access Kittn API endpoints, which can get information on various cats, kittens, and breeds in our database.
+Welcome to the Merak API Documentation! You can use the API endpoints for our different products based on the one chosen in our [dashboard](https://dashboard.merak.ai).
 
-We have language bindings in Shell, Ruby, and Python! You can view code examples in the dark area to the right, and you can switch the programming language of the examples with the tabs in the top right.
-
-This example API documentation page was created with [Slate](https://github.com/tripit/slate). Feel free to edit it and use it as a base for your own API's documentation.
+The upload documentation are for individual data upload. For bulk upload API endpoints and methods please contact [Team Merak](mailto:abhinava@merak.ai?Subject=Bulk%20Upload%20API)
 
 # Authentication
 
-> To authorize, use this code:
+> To authorize your request you'll need to generate salt and key from the dashboard
+> Make sure to replace `albusdubledore` with your API key.
 
-```ruby
-require 'kittn'
+Kittn uses API keys to allow access to the API. You can register a new Kittn API key at our [dashboard](https://dashboard.merak.ai).
 
-api = Kittn::APIClient.authorize!('meowmeowmeow')
-```
-
-```python
-import kittn
-
-api = kittn.authorize('meowmeowmeow')
-```
-
-```shell
-# With shell, you can just pass the correct header with each request
-curl "api_endpoint_here"
-  -H "Authorization: meowmeowmeow"
-```
-
-```javascript
-const kittn = require('kittn');
-
-let api = kittn.authorize('meowmeowmeow');
-```
-
-> Make sure to replace `meowmeowmeow` with your API key.
-
-Kittn uses API keys to allow access to the API. You can register a new Kittn API key at our [developer portal](http://example.com/developers).
-
-Kittn expects for the API key to be included in all API requests to the server in a header that looks like the following:
-
-`Authorization: meowmeowmeow`
+Albus expects for the API key to be sent with each request
 
 <aside class="notice">
-You must replace <code>meowmeowmeow</code> with your personal API key.
+You must replace <code>albusdumbledore</code> with your personal API key.
 </aside>
 
-# Kittens
+# Albus
 
-## Get All Kittens
+## Add User
 
 ```ruby
-require 'kittn'
-
-api = Kittn::APIClient.authorize!('meowmeowmeow')
-api.kittens.get
+require 'uri'
+require 'net/http'
+url = URI("https://albus.merak.ai/user")
+http = Net::HTTP.new(url.host, url.port)
+request = Net::HTTP::Post.new(url)
+request["Content-Type"] = 'application/json'
+request["Cache-Control"] = 'no-cache'
+request.body = "{\n\t\"key\": \"albusdumbeldore\",\n\t\"data\": {\"user_id\": \"1\", \"gender\": \"male\", \"age_range\": \"18-25\", \"acquisition_channel\": \"google\"},\n\t\"hash\": \"f8acebcf17f0bee73a8d2717a90d6c6e8c3957ded2b60a5632cb5a3d3afefce3eba98c50b7c0e455e931e1c799f87378d487224a15a6c16f0734e22ca776fb02\"\n}"
+response = http.request(request)
+puts response.read_body
 ```
 
 ```python
-import kittn
-
-api = kittn.authorize('meowmeowmeow')
-api.kittens.get()
+import requests
+url = "https://albus.merak.ai/user"
+payload = "{\n\t\"key\": \"albusdumbeldore\",\n\t\"data\": {\"user_id\": \"1\", \"gender\": \"male\", \"age_range\": \"18-25\", \"acquisition_channel\": \"google\"},\n\t\"hash\": \"f8acebcf17f0bee73a8d2717a90d6c6e8c3957ded2b60a5632cb5a3d3afefce3eba98c50b7c0e455e931e1c799f87378d487224a15a6c16f0734e22ca776fb02\"\n}"
+headers = {
+  'Content-Type': "application/json",
+  'Cache-Control': "no-cache"
+}
+response = requests.request("POST", url, data=payload, headers=headers)
+print(response.text)
 ```
 
-```shell
-curl "http://example.com/api/kittens"
-  -H "Authorization: meowmeowmeow"
-```
-
-```javascript
-const kittn = require('kittn');
-
-let api = kittn.authorize('meowmeowmeow');
-let kittens = api.kittens.get();
+```NodeJs
+var request = require("request")
+var options = { 
+  method: 'POST',
+  url: 'https://albus.merak.ai/user',
+  headers: {
+    'Cache-Control': 'no-cache',
+    'Content-Type': 'application/json' 
+  },
+  body: {
+    key: 'albusdumbeldore',
+    data: { 
+      user_id: '1',
+      gender: 'male',
+      age_range: '18-25',
+      acquisition_channel: 'google' 
+    },
+    hash: 'f8acebcf17f0bee73a8d2717a90d6c6e8c3957ded2b60a5632cb5a3d3afefce3eba98c50b7c0e455e931e1c799f87378d487224a15a6c16f0734e22ca776fb02' 
+  },
+  json: true 
+}
+request(options, function (error, response, body) {
+  if (error) throw new Error(error)
+  console.log(body)
+})
 ```
 
 > The above command returns JSON structured like this:
 
 ```json
-[
-  {
-    "id": 1,
-    "name": "Fluffums",
-    "breed": "calico",
-    "fluffiness": 6,
-    "cuteness": 7
-  },
-  {
-    "id": 2,
-    "name": "Max",
-    "breed": "unknown",
-    "fluffiness": 5,
-    "cuteness": 10
-  }
-]
+{
+  "data": [],
+  "success": 1
+}
 ```
 
-This endpoint retrieves all kittens.
+This endpoint inserts a user.
+
+### Hash
+
+`Key|user_id:USER_ID|gender:GENDER|age_range:AGE_RANGE|acquisition_channel:ACQUISITION_CHANNEL|Salt`
 
 ### HTTP Request
 
-`GET http://example.com/api/kittens`
+`POST https://albus.merak.ai/user`
 
 ### Query Parameters
 
-Parameter | Default | Description
---------- | ------- | -----------
-include_cats | false | If set to true, the result will also include cats.
-available | true | If set to false, the result will include kittens that have already been adopted.
+Parameter | Description
+--------- | -----------
+key | The key you obtained from dashboard.
+data | user_id is mandatory, rest can be blank.
+hash | Please refer to hash section of this API
 
-<aside class="success">
+<!-- <aside class="success">
 Remember — a happy kitten is an authenticated kitten!
-</aside>
+</aside> -->
 
-## Get a Specific Kitten
+## Add Product
 
 ```ruby
-require 'kittn'
-
-api = Kittn::APIClient.authorize!('meowmeowmeow')
-api.kittens.get(2)
+require 'uri'
+require 'net/http'
+url = URI("https://albus.merak.ai/product")
+http = Net::HTTP.new(url.host, url.port)
+request = Net::HTTP::Post.new(url)
+request["Content-Type"] = 'application/json'
+request["Cache-Control"] = 'no-cache'
+request.body = "{\n\t\"key\": \"albusdumbeldore\",\n\t\"data\": {\"product_id\": \"3\", \"category\": \"Apparels\", \"image_link\": \"https://cloud.netlifyusercontent.com/assets/344dbf88-fdf9-42bb-adb4-46f01eedd629/68dd54ca-60cf-4ef7-898b-26d7cbe48ec7/10-dithering-opt.jpg\", \"color\": \"black\", \"brand\": \"Nike\", \"size\": \"M\", \"price\": \"500\"},\n\t\"hash\": \"49c1be88efb96cc403d8e3abe515c1bf91b0f751bf34d75cb62ba73958fc87a83ba986e0e1e3d973112242395637763ec91feb750bcfd7c4bc8ad6790295b36b\"\n}"
+response = http.request(request)
+puts response.read_body
 ```
 
 ```python
-import kittn
-
-api = kittn.authorize('meowmeowmeow')
-api.kittens.get(2)
+import requests
+url = "https://albus.merak.ai/product"
+payload = "{\n\t\"key\": \"albusdumbeldore\",\n\t\"data\": {\"product_id\": \"3\", \"category\": \"Apparels\", \"image_link\": \"https://cloud.netlifyusercontent.com/assets/344dbf88-fdf9-42bb-adb4-46f01eedd629/68dd54ca-60cf-4ef7-898b-26d7cbe48ec7/10-dithering-opt.jpg\", \"color\": \"black\", \"brand\": \"Nike\", \"size\": \"M\", \"price\": \"500\"},\n\t\"hash\": \"49c1be88efb96cc403d8e3abe515c1bf91b0f751bf34d75cb62ba73958fc87a83ba986e0e1e3d973112242395637763ec91feb750bcfd7c4bc8ad6790295b36b\"\n}"
+headers = {
+  'Content-Type': "application/json",
+  'Cache-Control': "no-cache"
+}
+response = requests.request("POST", url, data=payload, headers=headers)
+print(response.text)
 ```
 
-```shell
-curl "http://example.com/api/kittens/2"
-  -H "Authorization: meowmeowmeow"
-```
-
-```javascript
-const kittn = require('kittn');
-
-let api = kittn.authorize('meowmeowmeow');
-let max = api.kittens.get(2);
+```NodeJs
+var request = require("request")
+var options = { 
+  method: 'POST',
+  url: 'https://albus.merak.ai/product',
+  headers: { 
+    'Cache-Control': 'no-cache',
+    'Content-Type': 'application/json' },
+  body: { 
+    key: 'albusdumbeldore',
+    data: { 
+      product_id: '3',
+      category: 'Apparels',
+      image_link: 'https://cloud.netlifyusercontent.com/assets/344dbf88-fdf9-42bb-adb4-46f01eedd629/68dd54ca-60cf-4ef7-898b-26d7cbe48ec7/10-dithering-opt.jpg',
+      color: 'black',
+      brand: 'Nike',
+      size: 'M',
+      price: '500' 
+    },
+    hash: '49c1be88efb96cc403d8e3abe515c1bf91b0f751bf34d75cb62ba73958fc87a83ba986e0e1e3d973112242395637763ec91feb750bcfd7c4bc8ad6790295b36b' },
+  json: true 
+}
+request(options, function (error, response, body) {
+  if (error) throw new Error(error)
+  console.log(body)
+})
 ```
 
 > The above command returns JSON structured like this:
 
 ```json
 {
-  "id": 2,
-  "name": "Max",
-  "breed": "unknown",
-  "fluffiness": 5,
-  "cuteness": 10
+  "data": [],
+  "success": 1
 }
 ```
 
-This endpoint retrieves a specific kitten.
+This endpoint uploads a product.
 
-<aside class="warning">Inside HTML code blocks like this one, you can't use Markdown, so use <code>&lt;code&gt;</code> blocks to denote code.</aside>
+<!-- <aside class="warning">Inside HTML code blocks like this one, you can't use Markdown, so use <code>&lt;code&gt;</code> blocks to denote code.</aside> -->
+### Hash
+
+`Key|product_id:PRODUCT_ID|category:CATEGORY|image_link:IMAGE_LINK|color:COLOR|brand:BRAND|size:SIZE|price:PRICE|Salt`
 
 ### HTTP Request
 
-`GET http://example.com/kittens/<ID>`
+`POST https://albus.merak.ai/product`
 
 ### URL Parameters
 
 Parameter | Description
 --------- | -----------
-ID | The ID of the kitten to retrieve
+key | The key you obtained from dashboard.
+data | product_id is mandatory, rest can be blank.
+hash | Please refer to hash section of this API
 
-## Delete a Specific Kitten
+## Add Activity
 
 ```ruby
-require 'kittn'
-
-api = Kittn::APIClient.authorize!('meowmeowmeow')
-api.kittens.delete(2)
+require 'uri'
+require 'net/http'
+url = URI("https://albus.merak.ai/activity")
+http = Net::HTTP.new(url.host, url.port)
+request = Net::HTTP::Post.new(url)
+request["Content-Type"] = 'application/json'
+request["Cache-Control"] = 'no-cache'
+request.body = "{\n\t\"key\": \"albusdumbeldore\",\n\t\"data\": {\"time\": 1516665030, \"user_id\": \"1\", \"product_id\": \"2\", \"type\": \"view\"},\n\t\"hash\": \"51d5541cbbe17b0030720f3e28753d8d69db444fe1f6c21c189c8dc0d06c933fd8f83a1e5442281ec2d3c564c9df2730c90eaca3e1ca4d1ef5e7adcb3e9bdd7d\"\n}"
+response = http.request(request)
+puts response.read_body
 ```
 
 ```python
-import kittn
-
-api = kittn.authorize('meowmeowmeow')
-api.kittens.delete(2)
+import requests
+url = "https://albus.merak.ai/activity"
+payload = "{\n\t\"key\": \"albusdumbeldore\",\n\t\"data\": {\"time\": 1516665030, \"user_id\": \"1\", \"product_id\": \"2\", \"type\": \"view\"},\n\t\"hash\": \"51d5541cbbe17b0030720f3e28753d8d69db444fe1f6c21c189c8dc0d06c933fd8f83a1e5442281ec2d3c564c9df2730c90eaca3e1ca4d1ef5e7adcb3e9bdd7d\"\n}"
+headers = {
+  'Content-Type': "application/json",
+  'Cache-Control': "no-cache"
+}
+response = requests.request("POST", url, data=payload, headers=headers)
+print(response.text)
 ```
 
-```shell
-curl "http://example.com/api/kittens/2"
-  -X DELETE
-  -H "Authorization: meowmeowmeow"
-```
-
-```javascript
-const kittn = require('kittn');
-
-let api = kittn.authorize('meowmeowmeow');
-let max = api.kittens.delete(2);
+```NodeJs
+var request = require("request")
+var options = { method: 'POST',
+  url: 'https://albus.merak.ai/activity',
+  headers: {
+    'Cache-Control': 'no-cache',
+    'Content-Type': 'application/json' },
+  body: { 
+    key: 'albusdumbeldore',
+    data: { time: 1516665030, user_id: '1', product_id: '2', type: 'view' },
+    hash: '51d5541cbbe17b0030720f3e28753d8d69db444fe1f6c21c189c8dc0d06c933fd8f83a1e5442281ec2d3c564c9df2730c90eaca3e1ca4d1ef5e7adcb3e9bdd7d' },
+  json: true 
+}
+request(options, function (error, response, body) {
+  if (error) throw new Error(error)
+  console.log(body)
+})
 ```
 
 > The above command returns JSON structured like this:
 
 ```json
 {
-  "id": 2,
-  "deleted" : ":("
+  "data": [],
+  "success": 1
 }
 ```
 
-This endpoint retrieves a specific kitten.
+This endpoint adds a user activity.
+
+### Activity Types
+
+["view", "likes", "comment", "wishlist", "chat", "cart", "buy"]
+
+### Hash
+
+`Key|time:TIMESTAMP|user_id:USER_ID|product_id:PRODUCT_ID|type:TYPE|Salt`
 
 ### HTTP Request
 
-`DELETE http://example.com/kittens/<ID>`
+`POST https://albus.merak.ai/activity`
 
 ### URL Parameters
 
 Parameter | Description
 --------- | -----------
-ID | The ID of the kitten to delete
+key | The key you obtained from dashboard.
+data | All fields are mandatory.
+data.time | Unix timestamp
+data.type | One among the set of activities types chosen in dashboard
+hash | Please refer to hash section of this API
+
+## Prediction
+
+```ruby
+require 'uri'
+require 'net/http'
+url = URI("https://albus.merak.ai/predict")
+http = Net::HTTP.new(url.host, url.port)
+request = Net::HTTP::Post.new(url)
+request["Content-Type"] = 'application/json'
+request["Cache-Control"] = 'no-cache'
+request.body = "{\n\t\"key\": \"albusdumbeldore\",\n\t\"data\": {\"user_id\": \"1\", \"product_id\": \"2\", \"filter\": {}},\n\t\"hash\": \"fb0f8e1fa175d510e10c314a45247b70cb1fd87c6c878a94bcc6ac8d76d888c2b4be867cf0ef9f9d191707d4bd243499fb85ebe5895d4060b63d6eac0d9b48ae\"\n}"
+response = http.request(request)
+puts response.read_body
+```
+
+```python
+import requests
+url = "https://albus.merak.ai/predict"
+payload = "{\n\t\"key\": \"albusdumbeldore\",\n\t\"data\": {\"user_id\": \"1\", \"product_id\": \"2\", \"filter\": {}},\n\t\"hash\": \"fb0f8e1fa175d510e10c314a45247b70cb1fd87c6c878a94bcc6ac8d76d888c2b4be867cf0ef9f9d191707d4bd243499fb85ebe5895d4060b63d6eac0d9b48ae\"\n}"
+headers = {
+  'Content-Type': "application/json",
+  'Cache-Control': "no-cache"
+}
+response = requests.request("POST", url, data=payload, headers=headers)
+print(response.text)
+```
+
+```NodeJs
+var request = require("request");
+var options = { method: 'POST',
+  url: 'https://albus.merak.ai/predict',
+  headers: { 
+    'Cache-Control': 'no-cache',
+    'Content-Type': 'application/json' 
+  },
+  body: { 
+    key: 'albusdumbeldore',
+    data: { user_id: '1', product_id: '2', filter: {} },
+    hash: 'fb0f8e1fa175d510e10c314a45247b70cb1fd87c6c878a94bcc6ac8d76d888c2b4be867cf0ef9f9d191707d4bd243499fb85ebe5895d4060b63d6eac0d9b48ae' 
+  },
+  json: true 
+}
+request(options, function (error, response, body) {
+  if (error) throw new Error(error)
+  console.log(body)
+})
+```
+
+> The above command returns JSON structured like this:
+
+```json
+{
+  "success" : 1,
+  "data" : [
+    {"product_id": "3", "category": "Apparels", "image_link": "https://cloud.netlifyusercontent.com/assets/344dbf88-fdf9-42bb-adb4-46f01eedd629/68dd54ca-60cf-4ef7-898b-26d7cbe48ec7/10-dithering-opt.jpg", "color": "black", "brand": "Nike", "size": "M", "price": "500"},
+    {"product_id": "3", "category": "Apparels", "image_link": "https://cloud.netlifyusercontent.com/assets/344dbf88-fdf9-42bb-adb4-46f01eedd629/68dd54ca-60cf-4ef7-898b-26d7cbe48ec7/10-dithering-opt.jpg", "color": "black", "brand": "Nike", "size": "M", "price": "500"},
+    {"product_id": "3", "category": "Apparels", "image_link": "https://cloud.netlifyusercontent.com/assets/344dbf88-fdf9-42bb-adb4-46f01eedd629/68dd54ca-60cf-4ef7-898b-26d7cbe48ec7/10-dithering-opt.jpg", "color": "black", "brand": "Nike", "size": "M", "price": "500"}
+  ]
+}
+```
+
+This endpoint fetches the predictions for the user, 10 at a time.
+
+### Filter Structure
+`{"filter": {"params": [{"name": "", "value": ""},{"name": "", "value": ""}...], "logic": ["and","or","and","and"...]}}`
+
+### Filter Params
+`{"name": "category", "value": []}`
+`{"name": "color", "value": []}`
+`{"name": "brand", "value": []]}`
+`{"name": "size", "value": []}`
+`{"name": "price", "value": {"gt": "", "lt": "", "eq": ""}}`
+
+Logic length should be 1 less than Params length
+
+### Hash
+
+`Key|product_id:PRODUCT_ID|user_id:USER_ID|filter:FILTER|Salt`
+
+### HTTP Request
+
+`POST https://albus.merak.ai/predict`
+
+### URL Parameters
+
+Parameter | Description
+--------- | -----------
+key | The key you obtained from dashboard.
+data | user_id and product_id is mandatory, filter can be empty json
+data.filter | Please read the filter details
+hash | Please refer to hash section of this API
 
